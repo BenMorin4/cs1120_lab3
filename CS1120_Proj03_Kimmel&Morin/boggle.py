@@ -8,14 +8,27 @@ import random
 
 
 class BoggleBoard:
-    # Initialize the BoggleBoard with a seed for random letter generation.
+# Initialize the BoggleBoard with a seed for random letter generation.
     def __init__(self, seed):
         self.__seed = seed
         self.create_board()
 
+# Getter and setter methods for the class attributes
+    def set_seed(self, seed):
+        self.__seed = seed
+
+    def get_seed(self):
+        return self.__seed
+
+    def set_board(self, board):
+        self.__board = board
+
+    def get_board(self):
+        return self.__board
+
     # Create the 4x4 board with random letters using the provided seed.
     def create_board(self):
-        random.seed(self.__seed)  # Set the seed for reproducible random letters.
+        random.seed(self.__seed) 
         # Generate a 4x4 grid of uppercase letters.
         self.__board = [[random.choice(string.ascii_uppercase) for _ in range(4)] for _ in range(4)]
 
@@ -23,7 +36,7 @@ class BoggleBoard:
     def print_board(self, highlighted_path=None):
         print("+---+ " * 4)  # Print the top border of the board.
         for row_index, row in enumerate(self.__board):
-            for col_index, char in enumerate(row):
+            for col_index, char in enumerate(row): 
                 # Highlight letters that are part of the guessed word path.
                 format_char = f"<{char}>" if highlighted_path and (
                 row_index, col_index) in highlighted_path else f" {char} "
@@ -32,10 +45,12 @@ class BoggleBoard:
 
     # Handle the user's guess, checking if the word exists on the board.
     def guess_word(self, word):
+        if not word: # if user does not guess a word then nothing happens
+            return
         word = word.upper()  # Ensure the guessed word is in uppercase.
         path = self.__find_word_path(word)  # Attempt to find the word on the board.
         # Determine the message based on whether a path was found.
-        message = "Nice Job!" if path else "I don't see that word.\nAre we looking at the same board?"
+        message = "Nice Job!" if path else "Is don't see that word.\nAre we looking at the same board?"
         self.__print_result(word, path, message)  # Print the result message and board if needed.
 
     # Recursive method to find if the word exists on the board from any starting point.
@@ -68,12 +83,8 @@ class BoggleBoard:
             self.print_board(path)  # Reprint the board with the path highlighted if the word was found.
 
     # Recursive method to check if the given word is a palindrome.
-    def __is_palindrome(self, word, start=0, end=None):
-        if end is None:
-            end = len(word) - 1
-        if start >= end:  # Base case: all letters have been checked.
+    def __is_palindrome(self, word):
+        if len(word) == 1:  # Base case for recursive function call
             return True
-        if word[start] != word[end]:  # If letters at the start and end don't match, it's not a palindrome.
-            return False
-        return self.__is_palindrome(word, start + 1, end - 1)  # Recursive call to check the next pair of letters.
-
+        elif word[0] == word[-1]: # Passes in the next 2 closest letters in the word
+            return self.__is_palindrome(word[1:-1])
